@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   overssh:
+    image: ghcr.io/alexgaudon/overs.sh:latest
     ports:
       - "22:22"      # OverSSH on port 22
     environment:

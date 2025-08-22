@@ -180,50 +180,18 @@ EOF
     success "Caddyfile created for $DOMAIN"
 }
 
-update_docker_compose() {
-    log "Updating docker-compose.yml for production deployment..."
+download_docker_compose() {
+    log "Downloading docker-compose.prod.yml from GitHub..."
     
-    # Create production docker-compose override
-    cat > docker-compose.prod.yml << EOF
-version: '3.8'
-
-services:
-  overssh:
-    ports:
-      - "22:22"      # OverSSH on port 22
-    environment:
-      - DEV=false
-    restart: unless-stopped
-    networks:
-      - overssh-net
-
-  caddy:
-    image: caddy:2-alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    restart: unless-stopped
-    networks:
-      - overssh-net
-    depends_on:
-      - overssh
-
-networks:
-  overssh-net:
-    driver: bridge
-
-volumes:
-  caddy_data:
-    external: false
-  caddy_config:
-    external: false
-EOF
-
-    success "Production docker-compose configuration created"
+    # Download the production docker-compose file from GitHub
+    curl -fsSL https://raw.githubusercontent.com/alexgaudon/overs.sh/main/docker-compose.prod.yml -o docker-compose.prod.yml
+    
+    if [ $? -eq 0 ]; then
+        success "docker-compose.prod.yml downloaded successfully"
+    else
+        error "Failed to download docker-compose.prod.yml from GitHub"
+        exit 1
+    fi
 }
 
 setup_firewall() {
@@ -310,7 +278,7 @@ main() {
     setup_firewall
     create_overssh_service
     create_caddyfile
-    update_docker_compose
+    download_docker_compose
     deploy_application
     restart_services
     show_status
