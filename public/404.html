@@ -3,25 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OverSSH: Secure File Transfer for Developers</title>
-    <link rel="stylesheet" href="/main.css" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <title>404 - Page Not Found | OverSSH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="font-sans bg-gray-900 text-white min-h-screen flex flex-col">
     <header class="bg-blue-900 text-white text-center py-8">
-      <h1 class="text-6xl mb-4">Welcome to OverSSH</h1>
-      <p class="text-lg">Your Private, Effortless File Transfer Solution</p>
+      <h1 class="text-4xl mb-2">OverSSH</h1>
+      <p class="text-lg">Secure File Transfer</p>
     </header>
 
-    <div class="text-center text-2xl h-20 mb-auto mt-10">
-      <h1>four oh four; page not found</h1>
-    </div>
+    <main class="flex-grow flex items-center justify-center px-4">
+      <div class="text-center">
+        <h1 class="text-6xl font-bold text-gray-400 mb-4">404</h1>
+        <p class="text-xl text-gray-300 mb-8">Page not found</p>
+        <a href="/" class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+          Go Home
+        </a>
+      </div>
+    </main>
 
-    <footer class="bg-blue-900 text-white text-center py-4 sticky bottom-0">
-      <p class="text-lg">&copy; 2023 OverSSH. All rights reserved.</p>
+    <footer class="bg-gray-800 text-white text-center py-4">
+      <p>&copy; <span id="currentYear"></span> OverSSH</p>
     </footer>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>

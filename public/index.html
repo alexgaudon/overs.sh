@@ -4,66 +4,69 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OverSSH: Secure File Transfer for Developers</title>
-    <link rel="stylesheet" href="/main.css" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="font-sans bg-gray-900 text-white min-h-screen flex flex-col">
     <header class="bg-blue-900 text-white text-center py-8">
-      <h1 class="text-6xl mb-4">Welcome to OverSSH</h1>
-      <p class="text-lg">Your Private, Effortless File Transfer Solution</p>
+      <h1 class="text-4xl mb-2">OverSSH</h1>
+      <p class="text-lg">Secure File Transfer</p>
     </header>
 
-    <section
-      id="features"
-      class="flex flex-wrap m-4 p-4 bg-gray-800 shadow-md rounded-lg flex-grow"
-    >
-      <div class="w-full md:w-1/2">
-        <ul class="md:text-lg">
-          <h2 class="text-blue-400 text-2xl">Why OverSSH?</h2>
-          <li class="mt-4">
-            Simplicity: No more complex commands or manual setups.
+    <section class="flex flex-col lg:flex-row gap-8 m-4 p-8 bg-gray-800 rounded-lg flex-grow">
+      <div class="w-full lg:w-1/2">
+        <h2 class="text-2xl font-bold text-blue-400 mb-6">Why OverSSH?</h2>
+        <ul class="space-y-4">
+          <li class="flex items-start space-x-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <div>
+              <strong>Simplicity:</strong> No more complex commands or manual setups.
+            </div>
           </li>
-          <li class="mt-2">
-            Privacy First: Your data is precious. OverSSH ensures your files
-            stay private.
+          <li class="flex items-start space-x-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <div>
+              <strong>Privacy First:</strong> Your data stays private with end-to-end encryption.
+            </div>
           </li>
-          <li class="mt-2">
-            Developer Friendly: Built by developers, for developers.
+          <li class="flex items-start space-x-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <div>
+              <strong>Developer Friendly:</strong> Built by developers, for developers.
+            </div>
           </li>
         </ul>
       </div>
-      <pre
-        class="hidden lg:block bg-gray-700 text-green-300 w-full md:w-1/2 p-4 sm:w-1/2"
-      >
-$ ssh overs.sh &lt; my-secure-file.txt
+      <div class="w-full lg:w-1/2">
+        <div class="bg-gray-700 rounded-lg p-4">
+          <div class="text-sm text-gray-400 mb-3 font-mono">$ ssh overs.sh &lt; my-secure-file.txt</div>
+          <pre class="text-green-400 font-mono text-sm leading-relaxed overflow-x-auto">
  ______  __   ________  ______  ______  ______  ______
 /\  __ \/\ \ / /\  ___\/\  == \/\  ___\/\  ___\/\ \_\ \
 \ \ \/\ \ \ \'/\ \  __\\ \  __<\ \___  \ \___  \ \  __ \
  \ \_____\ \__| \ \_____\ \_\ \_\/\_____\/\_____\ \_\ \_\
   \/_____/\/_/   \/_____/\/_/ /_/\/_____/\/_____/\/_/\/_/
+
 Waiting for someone to download the file...
-Download link:
-<a href="/d/eba5349c34">https://overs.sh/d/eba5349c34</a>
-        </pre>
+Download link: <a href="https://overs.sh/d/eba5349c34" class="text-blue-400 hover:text-blue-300 underline">https://overs.sh/d/eba5349c34</a>
+          </pre>
+        </div>
+      </div>
     </section>
 
-    <section id="features-at-a-glance" class="bg-gray-800 m-4 p-4">
-      <h2 class="text-blue-400 text-2xl">Features at a Glance</h2>
-      <ul class="mt-4">
-        <li>Fast Transfers: Enjoy lightning-fast file transfers.</li>
-        <li class="mt-2">
-          Security: End-to-end encryption and secure SSH connections.
-        </li>
-        <li class="mt-2">Cross-Platform: Works wherever SSH does.</li>
-        <!-- Add more features here -->
+    <section class="bg-gray-800 m-4 p-6 rounded-lg">
+      <h2 class="text-xl font-bold text-blue-400 mb-4">Features</h2>
+      <ul class="space-y-2">
+        <li>• Fast transfers with optimized SSH connections</li>
+        <li>• End-to-end encryption and secure connections</li>
+        <li>• Works on Linux, macOS, Windows, and more</li>
       </ul>
     </section>
 
-    <footer class="bg-blue-900 text-white text-center py-4">
-      <p class="text-lg">&copy; 2023 OverSSH. All rights reserved.</p>
+    <footer class="bg-gray-800 text-white text-center py-4">
+      <p>&copy; <span id="currentYear"></span> OverSSH</p>
     </footer>
+    <script>
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>
