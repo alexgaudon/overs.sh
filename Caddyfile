@@ -1,0 +1,4 @@
+# Default Caddyfile - will be replaced during deployment
+localhost:8080 {
+    reverse_proxy overssh:8080
+}

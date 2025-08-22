@@ -1,0 +1,31 @@
+# Binaries
+bin/
+tmp/
+
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+
+# Node modules (if any)
+node_modules/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Build artifacts
+*.log
+
+# Tailwind output
+public/main.css

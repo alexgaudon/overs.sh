@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  overssh:
+    ports:
+      - "22:22"      # OverSSH on port 22
+    environment:
+      - DEV=false
+    restart: unless-stopped
+    networks:
+      - overssh-net
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+    networks:
+      - overssh-net
+    depends_on:
+      - overssh
+
+networks:
+  overssh-net:
+    driver: bridge
+
+volumes:
+  caddy_data:
+    external: false
+  caddy_config:
+    external: false
