@@ -42,6 +42,12 @@ func StartDownloadServer() error {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
+	// Trust proxy headers when behind Caddy
+	if os.Getenv("DEV") != "true" {
+		e.Use(middleware.Secure())
+		e.IPExtractor = echo.ExtractIPFromXFFHeader()
+	}
+
 	e.GET("/", index)
 
 	e.GET("/d/:id", downloadHandler)
@@ -53,10 +59,8 @@ func StartDownloadServer() error {
 	if os.Getenv("DEV") == "true" {
 		e.Start(":3000")
 	} else {
-		err := e.StartTLS(":443", "./fullchain.pem", "./privkey.pem")
-		if err != nil {
-			return err
-		}
+		// In production, use HTTP on port 8080 since Caddy handles HTTPS
+		e.Start(":8080")
 	}
 
 	return nil

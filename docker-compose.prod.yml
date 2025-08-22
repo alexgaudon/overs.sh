@@ -5,11 +5,22 @@ services:
     image: ghcr.io/alexgaudon/overs.sh:latest
     ports:
       - "22:22"      # OverSSH on port 22
+    expose:
+      - "8080"       # HTTP server for Caddy reverse proxy
     environment:
       - DEV=false
+    volumes:
+      - ./ssh_host_rsa_key:/root/key:ro
+      - ./ssh_host_rsa_key.pub:/root/key.pub:ro
     restart: unless-stopped
     networks:
       - overssh-net
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   caddy:
     image: caddy:2-alpine
@@ -20,11 +31,19 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
+    environment:
+      - DOMAIN=${DOMAIN:-localhost}
     restart: unless-stopped
     networks:
       - overssh-net
     depends_on:
-      - overssh
+      overssh:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   overssh-net:

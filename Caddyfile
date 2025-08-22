@@ -1,4 +1,42 @@
-# Default Caddyfile - will be replaced during deployment
-localhost:8080 {
-    reverse_proxy overssh:8080
+# Production Caddyfile
+# This will be replaced during deployment with actual domain
+{$DOMAIN:localhost} {
+    reverse_proxy overssh:8080 {
+        # Health check
+        health_uri /
+        health_interval 30s
+        health_timeout 10s
+        
+        # Custom header forwarding (X-Forwarded-* are handled by default)
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+    }
+    
+    # Enable compression
+    encode gzip
+    
+    # Security headers
+    header {
+        # Enable HSTS
+        Strict-Transport-Security max-age=31536000;
+        # Prevent content type sniffing
+        X-Content-Type-Options nosniff
+        # Enable XSS protection
+        X-XSS-Protection "1; mode=block"
+        # Prevent clickjacking
+        X-Frame-Options DENY
+        # Remove server identification
+        -Server
+    }
+    
+    # Handle errors gracefully
+    handle_errors {
+        @5xx expression {http.error.status_code} >= 500
+        respond @5xx "Service temporarily unavailable" 503
+    }
+    
+    # Request timeout
+    request_body {
+        max_size 10MB
+    }
 }

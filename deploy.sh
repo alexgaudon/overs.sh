@@ -162,29 +162,21 @@ EOF
     success "OverSSH service created and enabled"
 }
 
-create_caddyfile() {
-    log "Creating Caddyfile for domain: $DOMAIN"
+download_caddyfile() {
+    log "Downloading Caddyfile from GitHub..."
     
-    # Ensure we're creating the Caddyfile in the correct directory
+    # Ensure the directory exists and download to the correct location
     OVERSSH_DIR="/root/overssh"
     
-    cat > "$OVERSSH_DIR/Caddyfile" << EOF
-$DOMAIN {
-    reverse_proxy overssh:8080
+    # Download the Caddyfile from GitHub
+    curl -fsSL https://raw.githubusercontent.com/alexgaudon/overs.sh/main/Caddyfile -o "$OVERSSH_DIR/Caddyfile"
     
-    # Optional: Add security headers
-    header {
-        # Enable HSTS
-        Strict-Transport-Security max-age=31536000;
-        # Prevent clickjacking
-        X-Frame-Options DENY
-        # Prevent content-type sniffing
-        X-Content-Type-Options nosniff
-    }
-}
-EOF
-
-    success "Caddyfile created for $DOMAIN at $OVERSSH_DIR/Caddyfile"
+    if [ $? -eq 0 ]; then
+        success "Caddyfile downloaded successfully to $OVERSSH_DIR"
+    else
+        error "Failed to download Caddyfile from GitHub"
+        exit 1
+    fi
 }
 
 download_docker_compose() {
@@ -202,6 +194,24 @@ download_docker_compose() {
         error "Failed to download docker-compose.prod.yml from GitHub"
         exit 1
     fi
+}
+
+generate_ssh_keys() {
+    log "Generating SSH host keys for OverSSH..."
+    
+    OVERSSH_DIR="/root/overssh"
+    
+    # Generate SSH host key if it doesn't exist
+    if [ ! -f "$OVERSSH_DIR/ssh_host_rsa_key" ]; then
+        ssh-keygen -f "$OVERSSH_DIR/ssh_host_rsa_key" -N '' -t rsa -b 4096
+        success "SSH host key generated"
+    else
+        log "SSH host key already exists"
+    fi
+    
+    # Set proper permissions
+    chmod 600 "$OVERSSH_DIR/ssh_host_rsa_key"
+    chmod 644 "$OVERSSH_DIR/ssh_host_rsa_key.pub"
 }
 
 setup_firewall() {
@@ -232,6 +242,9 @@ deploy_application() {
     # Change to the correct directory and pull images
     OVERSSH_DIR="/root/overssh"
     cd "$OVERSSH_DIR"
+    
+    # Create environment file with domain
+    echo "DOMAIN=$DOMAIN" > .env
     
     # Build the application (production uses pre-built image)
     docker compose -f docker-compose.prod.yml pull
@@ -291,8 +304,9 @@ main() {
     remap_ssh_port
     setup_firewall
     create_overssh_service
-    create_caddyfile
+    download_caddyfile
     download_docker_compose
+    generate_ssh_keys
     deploy_application
     restart_services
     show_status
