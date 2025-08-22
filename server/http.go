@@ -49,6 +49,9 @@ func StartDownloadServer() error {
 	}
 
 	e.GET("/", index)
+	e.HEAD("/", func(c echo.Context) error {
+		return c.NoContent(200)
+	})
 
 	e.GET("/d/:id", downloadHandler)
 
