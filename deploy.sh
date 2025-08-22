@@ -145,8 +145,8 @@ After=docker.service
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=$(pwd)
-ExecStart=/usr/bin/docker compose up -d
-ExecStop=/usr/bin/docker compose down
+ExecStart=/usr/bin/docker compose -f docker-compose.prod.yml up -d
+ExecStop=/usr/bin/docker compose -f docker-compose.prod.yml down
 TimeoutStartSec=0
 
 [Install]
@@ -219,8 +219,8 @@ setup_firewall() {
 deploy_application() {
     log "Building and deploying OverSSH application..."
     
-    # Build the application
-    docker compose -f docker-compose.yml -f docker-compose.prod.yml build
+    # Build the application (production uses pre-built image)
+    docker compose -f docker-compose.prod.yml pull
     
     # Start the service
     systemctl start overssh.service
