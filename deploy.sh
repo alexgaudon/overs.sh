@@ -245,6 +245,7 @@ deploy_application() {
     
     # Create environment file with domain
     echo "DOMAIN=$DOMAIN" > .env
+    echo "URL=https://$DOMAIN" >> .env
     
     # Build the application (production uses pre-built image)
     docker compose -f docker-compose.prod.yml pull
