@@ -8,6 +8,7 @@ services:
     expose:
       - "8080" # HTTP server for Caddy reverse proxy
     environment:
+      - URL=${URL}
       - DEV=false
     volumes:
       - ./ssh_host_rsa_key:/root/key:ro
@@ -41,7 +42,6 @@ services:
       - caddy_config:/config
     environment:
       - DOMAIN=${DOMAIN}
-      - URL=${URL}
     restart: unless-stopped
     networks:
       - overssh-net
