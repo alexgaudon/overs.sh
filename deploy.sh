@@ -163,16 +163,22 @@ EOF
 }
 
 download_caddyfile() {
-    log "Downloading Caddyfile from GitHub..."
+    log "Downloading and configuring Caddyfile from GitHub..."
     
     # Ensure the directory exists and download to the correct location
     OVERSSH_DIR="/root/overssh"
     
     # Download the Caddyfile from GitHub
-    curl -fsSL https://raw.githubusercontent.com/alexgaudon/overs.sh/main/Caddyfile -o "$OVERSSH_DIR/Caddyfile"
+    curl -fsSL https://raw.githubusercontent.com/alexgaudon/overs.sh/main/Caddyfile -o "$OVERSSH_DIR/Caddyfile.template"
     
     if [ $? -eq 0 ]; then
-        success "Caddyfile downloaded successfully to $OVERSSH_DIR"
+        # Replace the domain placeholder with the actual domain
+        sed "s/{\$DOMAIN:localhost}/$DOMAIN/g" "$OVERSSH_DIR/Caddyfile.template" > "$OVERSSH_DIR/Caddyfile"
+        
+        # Remove the template file
+        rm "$OVERSSH_DIR/Caddyfile.template"
+        
+        success "Caddyfile configured with domain: $DOMAIN"
     else
         error "Failed to download Caddyfile from GitHub"
         exit 1
