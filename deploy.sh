@@ -135,6 +135,10 @@ remap_ssh_port() {
 create_overssh_service() {
     log "Creating OverSSH systemd service..."
     
+    # Use /root as the working directory for consistent deployment
+    OVERSSH_DIR="/root/overssh"
+    mkdir -p "$OVERSSH_DIR"
+    
     cat > /etc/systemd/system/overssh.service << EOF
 [Unit]
 Description=OverSSH Docker Service
@@ -144,7 +148,7 @@ After=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-WorkingDirectory=$(pwd)
+WorkingDirectory=$OVERSSH_DIR
 ExecStart=/usr/bin/docker compose -f docker-compose.prod.yml up -d
 ExecStop=/usr/bin/docker compose -f docker-compose.prod.yml down
 TimeoutStartSec=0
@@ -161,7 +165,10 @@ EOF
 create_caddyfile() {
     log "Creating Caddyfile for domain: $DOMAIN"
     
-    cat > Caddyfile << EOF
+    # Ensure we're creating the Caddyfile in the correct directory
+    OVERSSH_DIR="/root/overssh"
+    
+    cat > "$OVERSSH_DIR/Caddyfile" << EOF
 $DOMAIN {
     reverse_proxy overssh:8080
     
@@ -177,17 +184,20 @@ $DOMAIN {
 }
 EOF
 
-    success "Caddyfile created for $DOMAIN"
+    success "Caddyfile created for $DOMAIN at $OVERSSH_DIR/Caddyfile"
 }
 
 download_docker_compose() {
     log "Downloading docker-compose.prod.yml from GitHub..."
     
+    # Ensure the directory exists and download to the correct location
+    OVERSSH_DIR="/root/overssh"
+    
     # Download the production docker-compose file from GitHub
-    curl -fsSL https://raw.githubusercontent.com/alexgaudon/overs.sh/main/docker-compose.prod.yml -o docker-compose.prod.yml
+    curl -fsSL https://raw.githubusercontent.com/alexgaudon/overs.sh/main/docker-compose.prod.yml -o "$OVERSSH_DIR/docker-compose.prod.yml"
     
     if [ $? -eq 0 ]; then
-        success "docker-compose.prod.yml downloaded successfully"
+        success "docker-compose.prod.yml downloaded successfully to $OVERSSH_DIR"
     else
         error "Failed to download docker-compose.prod.yml from GitHub"
         exit 1
@@ -218,6 +228,10 @@ setup_firewall() {
 
 deploy_application() {
     log "Building and deploying OverSSH application..."
+    
+    # Change to the correct directory and pull images
+    OVERSSH_DIR="/root/overssh"
+    cd "$OVERSSH_DIR"
     
     # Build the application (production uses pre-built image)
     docker compose -f docker-compose.prod.yml pull
